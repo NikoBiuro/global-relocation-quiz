@@ -5,7 +5,249 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Relocation Quiz</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --light-bg: #f5f7fb;
+            --dark: #212529;
+            --success: #06d6a0;
+            --light-blue: #e0f7fa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        #quiz-form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .question-container {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .question-container h3 {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .option {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .ranking-section {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+        }
+        
+        .ranking-section h2 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .ranking-section p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #sortable li {
+            background: white;
+            margin-bottom: 12px;
+            padding: 15px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        #sortable li:before {
+            content: "≡";
+            margin-right: 15px;
+            color: #999;
+            font-size: 1.2rem;
+        }
+        
+        #sortable li:hover {
+            border-color: var(--primary);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .ui-state-highlight {
+            height: 20px;
+            background: rgba(67, 97, 238, 0.1);
+            border: 2px dashed var(--primary);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            align-self: center;
+            margin-top: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .progress-container {
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .nav-btn.next {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .nav-btn.next:hover {
+            background: var(--primary-dark);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 15px auto;
+            }
+            
+            .option {
+                min-width: 100%;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -14,9 +256,43 @@
             <p>Find your place. Build your life. Align with your values.</p>
         </header>
 
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text">Question <span id="current-q">1</span> of <span id="total-q">10</span></div>
+        </div>
+
         <form id="quiz-form">
             <div id="questions-container">
-                <!-- Questions will be dynamically inserted here -->
+                <!-- Question 1 -->
+                <div class="question-container" data-question="1">
+                    <h3>1. How important is it for you to live in a country with strong protections for personal identity and expression?</h3>
+                    <div class="options">
+                        <div class="option" data-value="4">Extremely important</div>
+                        <div class="option" data-value="3">Very important</div>
+                        <div class="option" data-value="2">Moderately important</div>
+                        <div class="option" data-value="1">Slightly important</div>
+                        <div class="option" data-value="0">Not important</div>
+                    </div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="question-container" data-question="2">
+                    <h3>2. How significant is religious freedom in your choice of relocation destination?</h3>
+                    <div class="options">
+                        <div class="option" data-value="4">Essential for my decision</div>
+                        <div class="option" data-value="3">Very significant</div>
+                        <div class="option" data-value="2">Moderately significant</div>
+                        <div class="option" data-value="1">Slightly significant</div>
+                        <div class="option" data-value="0">Not a factor</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-navigation">
+                <button type="button" class="nav-btn prev" id="prev-btn">Previous</button>
+                <button type="button" class="nav-btn next" id="next-btn">Next</button>
             </div>
 
             <div class="ranking-section">
@@ -42,6 +318,82 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize sortable list
+            $("#sortable").sortable({
+                placeholder: "ui-state-highlight"
+            });
+            $("#sortable").disableSelection();
+            
+            // Initialize quiz state
+            let currentQuestion = 1;
+            const totalQuestions = $('.question-container').length;
+            updateProgress();
+            
+            // Hide all questions except the first one
+            $('.question-container').hide();
+            $(`.question-container[data-question="${currentQuestion}"]`).show();
+            
+            // Update progress indicators
+            $('#current-q').text(currentQuestion);
+            $('#total-q').text(totalQuestions);
+            
+            // Option selection
+            $('.option').click(function() {
+                $(this).siblings().removeClass('selected');
+                $(this).addClass('selected');
+            });
+            
+            // Next button functionality
+            $('#next-btn').click(function() {
+                if (currentQuestion < totalQuestions) {
+                    $(`.question-container[data-question="${currentQuestion}"]`).hide();
+                    currentQuestion++;
+                    $(`.question-container[data-question="${currentQuestion}"]`).show();
+                    updateProgress();
+                }
+            });
+            
+            // Previous button functionality
+            $('#prev-btn').click(function() {
+                if (currentQuestion > 1) {
+                    $(`.question-container[data-question="${currentQuestion}"]`).hide();
+                    currentQuestion--;
+                    $(`.question-container[data-question="${currentQuestion}"]`).show();
+                    updateProgress();
+                }
+            });
+            
+            // Update progress bar
+            function updateProgress() {
+                const progress = (currentQuestion / totalQuestions) * 100;
+                $('#progress-fill').css('width', progress + '%');
+                $('#current-q').text(currentQuestion);
+                $('#total-q').text(totalQuestions);
+                
+                // Toggle button visibility
+                $('#prev-btn').toggle(currentQuestion > 1);
+            }
+            
+            // Form submission
+            $('#quiz-form').submit(function(e) {
+                e.preventDefault();
+                
+                // Get the ranking order
+                const rankedAreas = [];
+                $('#sortable li').each(function() {
+                    rankedAreas.push($(this).attr('data-area'));
+                });
+                
+                // Get the selected country (simulated for this example)
+                const countries = ['Canada', 'Sweden', 'New Zealand', 'Japan', 'Germany', 'Singapore'];
+                const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+                
+                // Redirect to thank you page with the result
+                window.location.href = `thankyou1.html?country=${encodeURIComponent(randomCountry)}`;
+            });
+        });
+    </script>
 </body>
 </html>
