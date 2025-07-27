@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Relocation Quiz</title>
+    <title>Global Relocation Compatibility Questionnaire</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <style>
         :root {
@@ -13,6 +13,8 @@
             --dark: #212529;
             --success: #06d6a0;
             --light-blue: #e0f7fa;
+            --section-color: #7209b7;
+            --warning: #ff9e00;
         }
         
         * {
@@ -26,21 +28,39 @@
             background: var(--light-bg);
             color: var(--dark);
             line-height: 1.6;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         .container {
             max-width: 800px;
-            margin: 30px auto;
+            margin: 0 auto;
             background: white;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
         }
         
         header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2rem;
         }
         
         header h1 {
@@ -56,10 +76,36 @@
             margin: 0 auto;
         }
         
-        #quiz-form {
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            background: var(--section-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 25px 0 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
             display: flex;
-            flex-direction: column;
-            gap: 30px;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-header::before {
+            content: "🔹";
+            font-size: 1.5rem;
         }
         
         .question-container {
@@ -67,38 +113,44 @@
             padding: 25px;
             border-radius: 8px;
             border-left: 4px solid var(--primary);
+            margin-bottom: 20px;
         }
         
         .question-container h3 {
             margin-bottom: 20px;
             color: var(--dark);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         
-        .options {
+        .rating {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
+            justify-content: center;
         }
         
-        .option {
-            flex: 1;
-            min-width: 200px;
-            padding: 15px;
+        .rating label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: center;
+            border: 2px solid #e0e0e0;
+            font-weight: 500;
+            min-width: 120px;
+            justify-content: center;
         }
         
-        .option:hover {
+        .rating label:hover {
             border-color: var(--primary);
             background: rgba(67, 97, 238, 0.05);
         }
         
-        .option.selected {
+        .rating input[type="radio"]:checked + label {
             border-color: var(--primary);
             background: rgba(67, 97, 238, 0.1);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
@@ -109,6 +161,7 @@
             padding: 25px;
             border-radius: 8px;
             border-left: 4px solid var(--success);
+            margin-top: 40px;
         }
         
         .ranking-section h2 {
@@ -138,6 +191,7 @@
             align-items: center;
             transition: all 0.3s ease;
             position: relative;
+            font-weight: 500;
         }
         
         #sortable li:before {
@@ -160,27 +214,70 @@
             margin-bottom: 12px;
         }
         
-        .submit-btn {
+        .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 25px;
             font-size: 1.1rem;
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.3s;
-            align-self: center;
-            margin-top: 20px;
             font-weight: 600;
             letter-spacing: 0.5px;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
         }
         
-        .submit-btn:hover {
+        .btn:hover {
             background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #05b38e;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background: #e68e00;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
         
         .progress-container {
             margin-bottom: 30px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .progress-bar {
@@ -198,103 +295,234 @@
         }
         
         .progress-text {
-            text-align: right;
+            display: flex;
+            justify-content: space-between;
             color: #666;
             font-size: 0.9rem;
             margin-top: 5px;
         }
         
-        .quiz-navigation {
+        .legend {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .nav-btn {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
         }
         
-        .nav-btn:hover {
-            background: #e0e0e0;
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            border-radius: 3px;
         }
         
-        .nav-btn.next {
-            background: var(--primary);
+        .legend-1 { background: #e63946; }
+        .legend-2 { background: #f1faee; }
+        .legend-3 { background: #a8dadc; }
+        .legend-4 { background: #457b9d; }
+        .legend-5 { background: #1d3557; }
+        
+        .intro-card {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .intro-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .intro-card h3 i {
+            font-size: 1.5rem;
+        }
+        
+        .intro-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .feature h4 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .timer {
+            background: var(--warning);
             color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            margin: 15px 0;
         }
         
-        .nav-btn.next:hover {
-            background: var(--primary-dark);
+        .nav-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 40px;
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 25px;
-                margin: 15px auto;
+                padding: 20px;
+                margin: 10px;
             }
             
-            .option {
-                min-width: 100%;
+            .rating label {
+                min-width: 100px;
+                padding: 8px 12px;
+                font-size: 0.9rem;
             }
             
             header h1 {
                 font-size: 1.8rem;
+            }
+            
+            .question-container {
+                padding: 20px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .feature {
+                min-width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Global Relocation Compatibility Questionnaire</h1>
-            <p>Find your place. Build your life. Align with your values.</p>
-        </header>
-
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-            <div class="progress-text">Question <span id="current-q">1</span> of <span id="total-q">10</span></div>
-        </div>
-
-        <form id="quiz-form">
-            <div id="questions-container">
-                <!-- Question 1 -->
-                <div class="question-container" data-question="1">
-                    <h3>1. How important is it for you to live in a country with strong protections for personal identity and expression?</h3>
-                    <div class="options">
-                        <div class="option" data-value="4">Extremely important</div>
-                        <div class="option" data-value="3">Very important</div>
-                        <div class="option" data-value="2">Moderately important</div>
-                        <div class="option" data-value="1">Slightly important</div>
-                        <div class="option" data-value="0">Not important</div>
-                    </div>
+        <!-- Introduction Page -->
+        <div id="intro-page" class="page active">
+            <header>
+                <div class="logo">🌎</div>
+                <h1>Global Relocation Compatibility Questionnaire</h1>
+                <p>Find your perfect destination. Align your values with your new home.</p>
+            </header>
+            
+            <div class="intro-card">
+                <h3><i>⏱️</i> What to Expect</h3>
+                <p>This comprehensive assessment will help us match you with countries that best fit your personal values, lifestyle preferences, and relocation priorities.</p>
+                
+                <div class="timer">
+                    <i>⏱️</i> Estimated time: 15-20 minutes
                 </div>
                 
-                <!-- Question 2 -->
-                <div class="question-container" data-question="2">
-                    <h3>2. How significant is religious freedom in your choice of relocation destination?</h3>
-                    <div class="options">
-                        <div class="option" data-value="4">Essential for my decision</div>
-                        <div class="option" data-value="3">Very significant</div>
-                        <div class="option" data-value="2">Moderately significant</div>
-                        <div class="option" data-value="1">Slightly significant</div>
-                        <div class="option" data-value="0">Not a factor</div>
-                    </div>
+                <p>We'll guide you through 10 key areas with a total of 87 questions. You can complete this at your own pace and return anytime.</p>
+            </div>
+            
+            <div class="intro-card">
+                <h3><i>🔒</i> Your Privacy</h3>
+                <p>Your responses are completely confidential. We don't share your personal data with third parties. Your quiz results will be sent to your email for your personal reference.</p>
+            </div>
+            
+            <div class="intro-features">
+                <div class="feature">
+                    <i>🔍</i>
+                    <h4>Personalized Matching</h4>
+                    <p>Our algorithm matches your preferences with country characteristics</p>
+                </div>
+                
+                <div class="feature">
+                    <i>📊</i>
+                    <h4>Comprehensive Analysis</h4>
+                    <p>87 questions across 10 key relocation dimensions</p>
+                </div>
+                
+                <div class="feature">
+                    <i>🌐</i>
+                    <h4>Global Database</h4>
+                    <p>Matches based on 50+ countries and their policies</p>
                 </div>
             </div>
-
-            <div class="quiz-navigation">
-                <button type="button" class="nav-btn prev" id="prev-btn">Previous</button>
-                <button type="button" class="nav-btn next" id="next-btn">Next</button>
+            
+            <div class="btn-group">
+                <button id="start-btn" class="btn btn-success">Start Questionnaire</button>
             </div>
-
+        </div>
+        
+        <!-- Section Pages -->
+        <div id="sections-container">
+            <!-- Section pages will be dynamically inserted here -->
+        </div>
+        
+        <!-- Ranking Page -->
+        <div id="ranking-page" class="page">
+            <header>
+                <h1>Rank Your Priorities</h1>
+                <p>Drag to order from most important (1) to least important (10)</p>
+            </header>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Final Step: Ranking</span>
+                    <span>Section: 11/11</span>
+                </div>
+            </div>
+            
             <div class="ranking-section">
                 <h2>Rank the Importance of Each Area</h2>
                 <p>Drag to order from most important (1) to least important (10):</p>
@@ -311,10 +539,57 @@
                     <li class="ui-state-default" data-area="10. Personal Alignment & Emotional Fit">Personal Alignment & Emotional Fit</li>
                 </ul>
             </div>
-
-            <button type="submit" class="submit-btn">Submit Quiz</button>
-        </form>
+            
+            <div class="btn-group">
+                <button id="back-to-sections" class="btn btn-secondary">Back to Questions</button>
+                <button id="submit-quiz" class="btn btn-success">Submit Questionnaire</button>
+            </div>
+        </div>
+        
+        <!-- Thank You Page -->
+        <div id="thankyou-page" class="page">
+            <header>
+                <div class="logo">✅</div>
+                <h1>Thank You for Completing Our Quiz!</h1>
+            </header>
+            
+            <div class="result">
+                <div class="intro-card" style="text-align: center; padding: 30px;">
+                    <h2>Your Ideal Country is: <strong id="country-result">Canada</strong></h2>
+                    <p>We've sent your full relocation report to your email.</p>
+                </div>
+                
+                <div class="intro-features">
+                    <div class="feature">
+                        <i>📧</i>
+                        <h4>Email Report</h4>
+                        <p>Detailed analysis sent to your inbox</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <i>📊</i>
+                        <h4>Country Comparison</h4>
+                        <p>See how other countries scored for you</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <i>📱</i>
+                        <h4>Mobile Access</h4>
+                        <p>Access your report anytime on any device</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button id="retake-btn" class="btn btn-warning">Retake Questionnaire</button>
+                <button id="home-btn" class="btn">Back to Home</button>
+            </div>
+        </div>
     </div>
+    
+    <footer>
+        <p>© 2023 Global Relocation Advisor | Your privacy is important to us</p>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
@@ -326,63 +601,318 @@
             });
             $("#sortable").disableSelection();
             
-            // Initialize quiz state
-            let currentQuestion = 1;
-            const totalQuestions = $('.question-container').length;
-            updateProgress();
-            
-            // Hide all questions except the first one
-            $('.question-container').hide();
-            $(`.question-container[data-question="${currentQuestion}"]`).show();
-            
-            // Update progress indicators
-            $('#current-q').text(currentQuestion);
-            $('#total-q').text(totalQuestions);
-            
-            // Option selection
-            $('.option').click(function() {
-                $(this).siblings().removeClass('selected');
-                $(this).addClass('selected');
-            });
-            
-            // Next button functionality
-            $('#next-btn').click(function() {
-                if (currentQuestion < totalQuestions) {
-                    $(`.question-container[data-question="${currentQuestion}"]`).hide();
-                    currentQuestion++;
-                    $(`.question-container[data-question="${currentQuestion}"]`).show();
-                    updateProgress();
+            // Questions data organized by sections
+            const sections = [
+                {
+                    id: 1,
+                    title: "Identity, Safety & Belonging",
+                    prefix: '1',
+                    questions: [
+                        "How important is it for your gender identity to be recognized and respected in daily life?",
+                        "How important is it to live in a country that accepts diverse sexual orientations?",
+                        "How important is feeling safe in public spaces based on who you are?",
+                        "How important is public acceptance of LGBTQ+ identities to your sense of comfort?",
+                        "How important is it for you to express your appearance or personality freely without judgment?",
+                        "How important is visible diversity and racial inclusiveness in the society you live in?",
+                        "How comfortable are you being one of the few foreigners in a mostly monocultural society?",
+                        "How important is cultural diversity in your future community?",
+                        "How important is it for your ethnicity or background to be understood and respected?",
+                        "How willing are you to live in a country where locals may be unfamiliar with foreigners?",
+                        "How important is feeling safe walking alone, especially at night?",
+                        "How important is legal protection for women, LGBTQ+, or racial minorities?",
+                        "How important is equal treatment by law enforcement and public institutions?",
+                        "How comfortable are you managing daily life without full cultural or legal knowledge?"
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Religion & Cultural Respect",
+                    prefix: '2',
+                    questions: [
+                        "How important is it for your religious beliefs or lack thereof to be respected?",
+                        "How comfortable are you living in a country where dominant religious values differ from your own?",
+                        "How important is having access to religious communities or places of worship?"
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Communication & Civic Participation",
+                    prefix: '3',
+                    questions: [
+                        "How important is it to live in a culture where direct communication is the norm?",
+                        "How important is social or professional formality in your environment?",
+                        "How important is punctuality and time discipline in daily life?",
+                        "How comfortable are you with structured hierarchies and formal authority (titles, ranks, seniority)?",
+                        "How important is it to contact local officials or government easily?",
+                        "How important is having a voice that can influence public services or policies?",
+                        "How comfortable are you living in a country where political criticism is discouraged?",
+                        "How interested are you in participating in local life (meetings, initiatives, volunteering)?"
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "Education & Learning",
+                    prefix: '4',
+                    questions: [
+                        "How important is access to high-quality education (public or private)?",
+                        "How important is it for you to have opportunities for personal or professional learning?",
+                        "How important is it for you to study in a language you're already fluent in?",
+                        "How willing are you to learn a new language for education or daily life?",
+                        "How important is it to legally combine study and part-time work?",
+                        "How important is it for your previous diplomas or degrees to be officially recognized?",
+                        "How important is it to study within your preferred budget range?"
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "Work, Career & Business",
+                    prefix: '5',
+                    questions: [
+                        "How important is it for you to stay in your current profession or industry?",
+                        "How open are you to changing your field or starting a new career?",
+                        "How important is it to work in a language you already speak?",
+                        "How willing are you to learn a local language if required for employment?",
+                        "How important is a clear separation between work and personal time?",
+                        "How important is having generous time off (vacation, holidays, sick leave)?",
+                        "How well do you function in a high-performance, fast-paced work culture?",
+                        "How important is the opportunity to start your own business in your new country?",
+                        "How comfortable are you with complex tax systems or legal obligations for self-employment?"
+                    ]
+                },
+                {
+                    id: 6,
+                    title: "Lifestyle, Housing & Convenience",
+                    prefix: '6',
+                    questions: [
+                        "How important is it to live in a lively, large city with many activities?",
+                        "How important is it to live in a calm, quiet, and slower-paced environment?",
+                        "How important is reliable public transportation to your daily life?",
+                        "How important is owning your own transportation (e.g., car or bike)?",
+                        "How sensitive are you to air quality and environmental conditions?",
+                        "How important is being close to daily amenities (shops, pharmacies, services)?",
+                        "How important is having personal space such as a backyard or private garden?",
+                        "How open are you to living somewhere more affordable but with fewer conveniences?",
+                        "How important is it for you to secure long-term housing quickly after arrival?",
+                        "How important is it that the legal system around housing is stable and transparent?",
+                        "How important is access to familiar or culturally relevant food and groceries?",
+                        "How comfortable are you adapting to a very different food culture or diet?"
+                    ]
+                },
+                {
+                    id: 7,
+                    title: "Family, Healthcare & Integration",
+                    prefix: '7',
+                    questions: [
+                        "How important is it to bring your existing family with you?",
+                        "How important is it to raise a family in the country you move to?",
+                        "How important is a family-oriented society or child-friendly environment?",
+                        "How important is it that a child-free lifestyle is socially accepted?",
+                        "How important is access to quality, affordable healthcare (public or private)?",
+                        "How important is community or institutional support for parenting?",
+                        "How willing are you to participate in government language or integration programs?",
+                        "How important is the opportunity to become a citizen in the long term?",
+                        "How willing are you to stay in the country for 5+ years before applying for permanent status?",
+                        "How important is it that dual citizenship is allowed or supported?",
+                        "How important is a clear and fair legal path toward full integration?",
+                        "How tolerant are you of slow, paper-based bureaucracies?",
+                        "How important is a fully digital, efficient administrative system?",
+                        "How comfortable are you using professional translators or legal guides if you don't speak the language?",
+                        "How important is access to mental health care or emotional support resources?",
+                        "How important is it for you to live in a culture where mental health is openly discussed?",
+                        "How important is a socially compassionate environment that doesn’t stigmatize vulnerability?"
+                    ]
+                },
+                {
+                    id: 8,
+                    title: "Migration Climate & Policy",
+                    prefix: '8',
+                    questions: [
+                        "How comfortable are you living in a country where immigration laws change often?",
+                        "How comfortable are you moving to a country that’s losing its migrant population?",
+                        "How comfortable are you living in a diverse migrant society where few share your background?",
+                        "How important is it that the government actively supports new migrants?",
+                        "How important is long-term political and policy stability regarding migration?"
+                    ]
+                },
+                {
+                    id: 9,
+                    title: "Culture, Innovation & Free Time",
+                    prefix: '9',
+                    questions: [
+                        "How important is access to public cultural events (museums, galleries, exhibitions)?",
+                        "How important is it to live in a place with historic architecture and cultural heritage?",
+                        "How important is it to live in a modern, tech-savvy, future-facing city?",
+                        "How important is it that the country supports innovation and modernization?",
+                        "How important is it for society to preserve traditions and historical identity?",
+                        "How important is being close to natural spaces (beaches, forests, parks)?",
+                        "How sensitive are you to the climate and seasons in your daily comfort?",
+                        "How much does your happiness depend on specific weather (hot, cold, mild)?",
+                        "How important is environmental sustainability and climate action in your future home?"
+                    ]
+                },
+                {
+                    id: 10,
+                    title: "Personal Alignment & Emotional Fit",
+                    prefix: '10',
+                    questions: [
+                        "How important is it that a country *feels right* emotionally, not just practically?",
+                        "How willing are you to make practical compromises for emotional or spiritual comfort?",
+                        "How confident do you need to feel that this place will help you grow as a person?"
+                    ]
                 }
-            });
+            ];
             
-            // Previous button functionality
-            $('#prev-btn').click(function() {
-                if (currentQuestion > 1) {
-                    $(`.question-container[data-question="${currentQuestion}"]`).hide();
-                    currentQuestion--;
-                    $(`.question-container[data-question="${currentQuestion}"]`).show();
-                    updateProgress();
-                }
-            });
+            // Generate section pages
+            const sectionsContainer = $("#sections-container");
+            let questionCounter = 1;
             
-            // Update progress bar
-            function updateProgress() {
-                const progress = (currentQuestion / totalQuestions) * 100;
-                $('#progress-fill').css('width', progress + '%');
-                $('#current-q').text(currentQuestion);
-                $('#total-q').text(totalQuestions);
+            sections.forEach(section => {
+                const sectionPage = $(`
+                    <div id="section-${section.id}-page" class="page">
+                        <header>
+                            <h1>Section ${section.id}: ${section.title}</h1>
+                            <p>Please answer the following questions based on your preferences</p>
+                        </header>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-${section.id}"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Questions: <span id="answered-${section.id}">0</span>/${section.questions.length}</span>
+                                <span>Section: ${section.id}/10</span>
+                            </div>
+                        </div>
+                        
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-1"></div>
+                                <span>1: Not at all / Doesn't matter</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-5"></div>
+                                <span>5: Extremely / Absolutely essential</span>
+                            </div>
+                        </div>
+                        
+                        <div id="questions-${section.id}">
+                            <!-- Questions will be inserted here -->
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button class="btn btn-secondary prev-section" data-section="${section.id}">Previous Section</button>
+                            <button class="btn next-section" data-section="${section.id}">Next Section</button>
+                        </div>
+                    </div>
+                `);
                 
-                // Toggle button visibility
-                $('#prev-btn').toggle(currentQuestion > 1);
+                sectionsContainer.append(sectionPage);
+                
+                const questionsContainer = sectionPage.find(`#questions-${section.id}`);
+                
+                // Add questions for this section
+                section.questions.forEach((question, index) => {
+                    const letter = String.fromCharCode(97 + index); // 97 = 'a'
+                    const questionId = `${section.prefix}.${letter}`;
+                    
+                    questionsContainer.append(`
+                        <div class="question-container" data-id="${questionId}">
+                            <h3>${questionCounter}. ${question}</h3>
+                            <div class="rating">
+                                <input type="radio" id="${questionId}_1" name="${questionId}" value="1">
+                                <label for="${questionId}_1">1: Not at all</label>
+                                
+                                <input type="radio" id="${questionId}_2" name="${questionId}" value="2">
+                                <label for="${questionId}_2">2: Slightly</label>
+                                
+                                <input type="radio" id="${questionId}_3" name="${questionId}" value="3">
+                                <label for="${questionId}_3">3: Moderately</label>
+                                
+                                <input type="radio" id="${questionId}_4" name="${questionId}" value="4">
+                                <label for="${questionId}_4">4: Very</label>
+                                
+                                <input type="radio" id="${questionId}_5" name="${questionId}" value="5">
+                                <label for="${questionId}_5">5: Extremely</label>
+                            </div>
+                        </div>
+                    `);
+                    
+                    questionCounter++;
+                });
+            });
+            
+            // Navigation functions
+            function showPage(pageId) {
+                $(".page").removeClass("active");
+                $(`#${pageId}`).addClass("active");
+                window.scrollTo(0, 0);
             }
             
-            // Form submission
-            $('#quiz-form').submit(function(e) {
-                e.preventDefault();
+            // Start button
+            $("#start-btn").click(function() {
+                showPage("section-1-page");
+            });
+            
+            // Next section buttons
+            $(".next-section").click(function() {
+                const currentSection = parseInt($(this).data("section"));
+                const nextSection = currentSection + 1;
                 
+                // Validate if all questions are answered in current section
+                const currentQuestions = $(`#section-${currentSection}-page input[type="radio"]`);
+                const answered = $(`#section-${currentSection}-page input[type="radio"]:checked`).length;
+                const total = currentQuestions.length / 5; // 5 options per question
+                
+                if (answered < total) {
+                    alert(`Please answer all ${total} questions in this section before proceeding.`);
+                    return;
+                }
+                
+                if (nextSection <= 10) {
+                    showPage(`section-${nextSection}-page`);
+                } else {
+                    showPage("ranking-page");
+                }
+            });
+            
+            // Previous section buttons
+            $(".prev-section").click(function() {
+                const currentSection = parseInt($(this).data("section"));
+                const prevSection = currentSection - 1;
+                
+                if (prevSection >= 1) {
+                    showPage(`section-${prevSection}-page`);
+                } else {
+                    showPage("intro-page");
+                }
+            });
+            
+            // Back to sections from ranking page
+            $("#back-to-sections").click(function() {
+                showPage("section-10-page");
+            });
+            
+            // Update progress as answers are selected
+            function updateSectionProgress(sectionId) {
+                const answered = $(`#section-${sectionId}-page input[type="radio"]:checked`).length;
+                const total = sections[sectionId-1].questions.length;
+                const percentage = (answered / total) * 100;
+                
+                $(`#progress-${sectionId}`).css("width", percentage + "%");
+                $(`#answered-${sectionId}`).text(answered);
+            }
+            
+            // Attach event listeners to radio buttons
+            $("body").on("change", "input[type='radio']", function() {
+                const sectionId = $(this).closest(".page").attr("id").split("-")[1];
+                updateSectionProgress(sectionId);
+            });
+            
+            // Submit quiz
+            $("#submit-quiz").click(function() {
                 // Get the ranking order
                 const rankedAreas = [];
-                $('#sortable li').each(function() {
+                $("#sortable li").each(function() {
                     rankedAreas.push($(this).attr('data-area'));
                 });
                 
@@ -390,8 +920,18 @@
                 const countries = ['Canada', 'Sweden', 'New Zealand', 'Japan', 'Germany', 'Singapore'];
                 const randomCountry = countries[Math.floor(Math.random() * countries.length)];
                 
-                // Redirect to thank you page with the result
-                window.location.href = `thankyou1.html?country=${encodeURIComponent(randomCountry)}`;
+                // Show result in thank you page
+                $("#country-result").text(randomCountry);
+                showPage("thankyou-page");
+            });
+            
+            // Navigation buttons in thank you page
+            $("#retake-btn").click(function() {
+                showPage("intro-page");
+            });
+            
+            $("#home-btn").click(function() {
+                showPage("intro-page");
             });
         });
     </script>
