@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Relocation Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Global Relocation Compatibility Questionnaire</h1>
+            <p>Find your place. Build your life. Align with your values.</p>
+        </header>
+
+        <form id="quiz-form">
+            <div id="questions-container">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+
+            <div class="ranking-section">
+                <h2>Rank the Importance of Each Area</h2>
+                <p>Drag to order from most important (1) to least important (10):</p>
+                <ul id="sortable">
+                    <li data-area="1. Identity, Safety & Belonging">Identity, Safety & Belonging</li>
+                    <li data-area="2. Religion & Cultural Respect">Religion & Cultural Respect</li>
+                    <li data-area="3. Communication & Civic Participation">Communication & Civic Participation</li>
+                    <li data-area="4. Education & Learning">Education & Learning</li>
+                    <li data-area="5. Work, Career & Business">Work, Career & Business</li>
+                    <li data-area="6. Lifestyle, Housing & Convenience">Lifestyle, Housing & Convenience</li>
+                    <li data-area="7. Family, Healthcare & Integration">Family, Healthcare & Integration</li>
+                    <li data-area="8. Migration Climate & Policy">Migration Climate & Policy</li>
+                    <li data-area="9. Culture, Innovation & Free Time">Culture, Innovation & Free Time</li>
+                    <li data-area="10. Personal Alignment & Emotional Fit">Personal Alignment & Emotional Fit</li>
+                </ul>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Quiz</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

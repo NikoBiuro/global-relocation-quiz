@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You | Global Relocation Quiz</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --dark: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            background: #f5f7fb;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .result {
+            font-size: 24px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #e0f7fa;
+            border-radius: 8px;
+        }
+        
+        .home-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .home-btn:hover {
+            background: #3a0ca3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thank You for Completing Our Quiz!</h1>
+        
+        <div class="result">
+            Your ideal country is: <strong id="country-result"></strong>
+        </div>
+        
+        <p>We've sent your full relocation report to your email.</p>
+        <p>You can also <a href="index.html" class="home-btn">Retake the Quiz</a></p>
+    </div>
+
+    <script>
+        // Get country result from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const country = urlParams.get('country') || 'No result found';
+        document.getElementById('country-result').textContent = country;
+    </script>
+</body>
+</html>
