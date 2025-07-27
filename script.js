@@ -1,7 +1,12 @@
 // Initialize when document is ready
 $(document).ready(function() {
     // Initialize drag-and-drop sorting
-    $("#sortable").sortable();
+    $("#sortable").sortable({
+        placeholder: "ui-state-highlight",
+        update: function(event, ui) {
+            console.log("Item moved");
+        }
+    });
     $("#sortable").disableSelection();
 
     // Generate questions dynamically
@@ -67,7 +72,7 @@ $(document).ready(function() {
         
         // Send to Google Apps Script
         try {
-            // YOUR GOOGLE SCRIPT URL
+            // Google Script URL
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxb_eVY63-2nhB18Bi1LSWNwGshRB5rRwl5yjBdQHvgIKjPRpY7xGqfwHJaQn4zHau9/exec";
             
             const response = await fetch(SCRIPT_URL, {
